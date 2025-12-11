@@ -1,0 +1,117 @@
+# AI Council System Configuration
+# Copy this to config.yaml and fill in your API keys
+
+# Environment: development, staging, production
+environment: development
+debug: true
+
+# LLM Configuration
+llm:
+  # Anthropic Claude
+  anthropic_api_key: null  # Set via ANTHROPIC_API_KEY env var
+  claude_model: "claude-3-5-sonnet-20250219"
+  claude_temperature: 0.7
+  claude_max_tokens: 1000
+
+  # OpenAI GPT
+  openai_api_key: null  # Set via OPENAI_API_KEY env var
+  gpt_model: "gpt-4-turbo"
+  gpt_temperature: 0.7
+  gpt_max_tokens: 1000
+
+  # xAI Grok
+  xai_api_key: null  # Set via XAI_API_KEY env var
+  grok_model: "grok-1"
+  grok_temperature: 0.7
+  grok_max_tokens: 1000
+
+  # General LLM settings
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1.0
+
+# Event Source Configuration
+events:
+  # Twitter/X API
+  twitter_api_key: null
+  twitter_api_secret: null
+  twitter_access_token: null
+  twitter_access_secret: null
+  twitter_keywords:
+    - "AI"
+    - "cryptocurrency"
+    - "regulation"
+    - "ethics"
+  twitter_poll_interval: 60  # seconds
+
+  # News API
+  news_api_key: null
+  news_sources:
+    - "techcrunch"
+    - "bbc-news"
+    - "reuters"
+    - "the-verge"
+  news_categories:
+    - "technology"
+    - "business"
+  news_poll_interval: 300  # seconds
+
+  # RSS Feeds
+  rss_feed_urls:
+    - "https://blog.openai.com/rss/"
+    - "https://blog.anthropic.com/rss/"
+    - "https://www.coindesk.com/arc/outboundfeeds/rss/"
+  rss_poll_interval: 600  # seconds
+
+  # Queue settings
+  event_queue_size: 1000
+  min_controversy: 0.5
+
+# Debate Configuration
+debate:
+  council_size: 5
+  max_rounds: 3
+  response_timeout: 30
+  voting_enabled: true
+  formation_method: "diverse"  # diverse, random, rng
+
+# Text-to-Speech Configuration
+tts:
+  engine: "elevenlabs"  # elevenlabs, pyttsx3, gtts
+  elevenlabs_api_key: null
+  # Voice mapping: personality -> voice_id
+  voice_mapping:
+    pragmatist: "21m00Tcm4TlvDq8ikWAM"  # Rachel
+    idealist: "AZnzlk1XvdvUeBnXmlld"  # Domi
+    skeptic: "EXAVITQu4vr4xnSDxMaL"  # Bella
+    economist: "ErXwobaYiN019PkySvjV"  # Antoni
+    visionary: "MF3mGyEYCl7XYWbV9V6O"  # Elli
+  speed: 1.0
+  volume: 1.0
+  output_dir: "output/audio"
+
+# Streaming Configuration
+streaming:
+  enabled: false
+  output_dir: "output/streams"
+  video_width: 1280
+  video_height: 720
+  fps: 30
+  audio_bitrate: "192k"
+  video_bitrate: "2M"
+
+# Web Server Configuration
+web:
+  enabled: true
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "*"
+  api_prefix: "/api/v1"
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Set to path for file logging
+  console: true
