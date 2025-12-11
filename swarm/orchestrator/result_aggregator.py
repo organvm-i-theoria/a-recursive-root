@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class AggregationStrategy(Enum):
-    """Strategies for aggregating results"""
+    """
+    Enumeration of the strategies for aggregating results from multiple agents.
+    """
     MERGE = "merge"  # Merge all outputs
     VOTE = "vote"  # Use majority voting
     CONSENSUS = "consensus"  # Require consensus
@@ -25,7 +27,17 @@ class AggregationStrategy(Enum):
 
 @dataclass
 class AgentOutput:
-    """Output from a single agent"""
+    """
+    Represents the output from a single agent for a given task.
+
+    Attributes:
+        agent_id: The ID of the agent that produced the output.
+        role_name: The name of the role the agent was playing.
+        output_data: A dictionary containing the agent's output.
+        confidence: A score representing the agent's confidence in its output.
+        metadata: A dictionary for storing arbitrary metadata.
+        timestamp: The timestamp of when the output was generated.
+    """
     agent_id: str
     role_name: str
     output_data: Dict[str, Any]
@@ -34,7 +46,12 @@ class AgentOutput:
     timestamp: str
 
     def validate(self) -> bool:
-        """Validate agent output"""
+        """
+        Validates the agent's output.
+
+        Returns:
+            True if the output is valid, False otherwise.
+        """
         if not self.output_data:
             return False
         if self.confidence < 0 or self.confidence > 1:
@@ -44,7 +61,17 @@ class AgentOutput:
 
 @dataclass
 class AggregatedResult:
-    """Aggregated result from multiple agents"""
+    """
+    Represents the aggregated result from multiple agents.
+
+    Attributes:
+        outputs: The final, aggregated outputs.
+        contributing_agents: A list of IDs of the agents who contributed to the result.
+        confidence: The overall confidence in the aggregated result.
+        strategy_used: The aggregation strategy that was used.
+        conflicts: A list of any conflicts that were detected during aggregation.
+        metadata: A dictionary for storing arbitrary metadata.
+    """
     outputs: Dict[str, Any]
     contributing_agents: List[str]
     confidence: float
@@ -55,7 +82,15 @@ class AggregatedResult:
 
 @dataclass
 class ValidationResult:
-    """Result of output validation"""
+    """
+    Represents the result of a validation check on an aggregated result.
+
+    Attributes:
+        is_valid: A boolean indicating whether the result is valid.
+        errors: A list of any errors that were found.
+        warnings: A list of any warnings that were found.
+        quality_score: A score representing the quality of the result.
+    """
     is_valid: bool
     errors: List[str]
     warnings: List[str]
@@ -64,13 +99,16 @@ class ValidationResult:
 
 class ResultAggregator:
     """
-    Aggregates results from multiple agents
+    Aggregates results from multiple agents using various strategies.
 
-    Provides various strategies for combining agent outputs,
-    resolving conflicts, and validating final results.
+    This class provides methods for combining the outputs of multiple agents,
+    resolving conflicts, and validating the final results.
     """
 
     def __init__(self):
+        """
+        Initializes the ResultAggregator.
+        """
         self.aggregation_strategies = {
             AggregationStrategy.MERGE: self._merge_strategy,
             AggregationStrategy.VOTE: self._vote_strategy,
@@ -87,15 +125,15 @@ class ResultAggregator:
         config: Optional[Dict[str, Any]] = None
     ) -> AggregatedResult:
         """
-        Aggregate outputs from multiple agents
+        Aggregates the outputs from multiple agents using a specified strategy.
 
         Args:
-            agent_outputs: List of outputs from agents
-            strategy: Aggregation strategy to use
-            config: Optional configuration for aggregation
+            agent_outputs: A list of AgentOutput objects.
+            strategy: The aggregation strategy to use.
+            config: An optional dictionary of configuration for the aggregation strategy.
 
         Returns:
-            AggregatedResult with combined outputs
+            An AggregatedResult object containing the combined outputs.
         """
         logger.info(
             f"Aggregating {len(agent_outputs)} outputs "
@@ -137,14 +175,14 @@ class ResultAggregator:
         requirements: Dict[str, Any]
     ) -> ValidationResult:
         """
-        Validate aggregated result against requirements
+        Validates an aggregated result against a set of requirements.
 
         Args:
-            result: Aggregated result to validate
-            requirements: Validation requirements
+            result: The aggregated result to validate.
+            requirements: A dictionary of validation requirements.
 
         Returns:
-            ValidationResult with validation status
+            A ValidationResult object.
         """
         errors = []
         warnings = []
@@ -195,14 +233,14 @@ class ResultAggregator:
         strategy: str = "majority"
     ) -> Dict[str, Any]:
         """
-        Resolve conflicts between agent outputs
+        Resolves conflicts between agent outputs.
 
         Args:
-            conflicts: List of conflicting outputs
-            strategy: Resolution strategy (majority, weighted, manual)
+            conflicts: A list of conflicts to resolve.
+            strategy: The resolution strategy to use (e.g., "majority", "weighted", "manual").
 
         Returns:
-            Resolved output
+            A dictionary representing the resolved output.
         """
         if not conflicts:
             return {}
@@ -224,7 +262,16 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Merge all outputs into single result"""
+        """
+        Merges all agent outputs into a single result.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the merge strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         merged = {}
         conflicts = []
 
@@ -245,7 +292,7 @@ class ResultAggregator:
                     })
                 merged[key] = value
 
-        avg_confidence = sum(o.confidence for o in outputs) / len(outputs)
+        avg_confidence = sum(o.confidence for o in outputs) / len(outputs) if outputs else 0.0
 
         return AggregatedResult(
             outputs=merged,
@@ -261,7 +308,16 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Use majority voting for each output key"""
+        """
+        Uses majority voting to determine the final output for each key.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the vote strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         votes: Dict[str, Dict[Any, int]] = {}
         all_keys = set()
 
@@ -295,7 +351,7 @@ class ResultAggregator:
 
         # Calculate confidence based on vote strength
         total_votes = sum(sum(v.values()) for v in votes.values())
-        winning_votes = sum(max(v.values()) for v in votes.values())
+        winning_votes = sum(max(v.values()) for v in votes.values()) if votes else 0
         confidence = winning_votes / total_votes if total_votes > 0 else 0.0
 
         return AggregatedResult(
@@ -312,7 +368,16 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Require consensus (all agents agree)"""
+        """
+        Requires consensus among all agents for an output to be included.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the consensus strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         if not outputs:
             return self._empty_result(AggregationStrategy.CONSENSUS)
 
@@ -354,7 +419,16 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Weight outputs by agent confidence"""
+        """
+        Weights outputs by the confidence score of each agent.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the weighted strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         weighted = {}
         weights: Dict[str, List[tuple]] = {}  # key -> [(value, weight)]
 
@@ -386,7 +460,16 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Select best output based on confidence"""
+        """
+        Selects the best output based on the highest confidence score.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the best strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         if not outputs:
             return self._empty_result(AggregationStrategy.BEST)
 
@@ -406,14 +489,23 @@ class ResultAggregator:
         outputs: List[AgentOutput],
         config: Dict[str, Any]
     ) -> AggregatedResult:
-        """Process outputs sequentially (pipeline)"""
+        """
+        Processes outputs sequentially, allowing later outputs to override earlier ones.
+
+        Args:
+            outputs: A list of agent outputs.
+            config: The configuration for the sequential strategy.
+
+        Returns:
+            An AggregatedResult object.
+        """
         result = {}
 
         # Process in order, allowing later outputs to override
         for output in outputs:
             result.update(output.output_data)
 
-        avg_confidence = sum(o.confidence for o in outputs) / len(outputs)
+        avg_confidence = sum(o.confidence for o in outputs) / len(outputs) if outputs else 0.0
 
         return AggregatedResult(
             outputs=result,
@@ -427,22 +519,57 @@ class ResultAggregator:
     # Conflict Resolution Helpers
 
     def _resolve_by_majority(self, conflicts: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Resolve by majority rule"""
-        # Simplified - just take first value
+        """
+        Resolves conflicts by majority rule.
+
+        Note: This is a simplified implementation.
+
+        Args:
+            conflicts: A list of conflicts to resolve.
+
+        Returns:
+            A dictionary of resolved values.
+        """
         return {c["key"]: c["values"][0] for c in conflicts}
 
     def _resolve_by_weight(self, conflicts: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Resolve by weighted voting"""
-        # Simplified - just take first value
+        """
+        Resolves conflicts by weighted voting.
+
+        Note: This is a simplified implementation.
+
+        Args:
+            conflicts: A list of conflicts to resolve.
+
+        Returns:
+            A dictionary of resolved values.
+        """
         return {c["key"]: c["values"][0] for c in conflicts}
 
     def _resolve_by_confidence(self, conflicts: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Resolve by agent confidence"""
-        # Simplified - just take first value
+        """
+        Resolves conflicts by agent confidence.
+
+        Note: This is a simplified implementation.
+
+        Args:
+            conflicts: A list of conflicts to resolve.
+
+        Returns:
+            A dictionary of resolved values.
+        """
         return {c["key"]: c["values"][0] for c in conflicts}
 
     def _empty_result(self, strategy: AggregationStrategy) -> AggregatedResult:
-        """Create empty result"""
+        """
+        Creates an empty AggregatedResult.
+
+        Args:
+            strategy: The aggregation strategy that was attempted.
+
+        Returns:
+            An empty AggregatedResult object.
+        """
         return AggregatedResult(
             outputs={},
             contributing_agents=[],

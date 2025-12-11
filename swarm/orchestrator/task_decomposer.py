@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class TaskType(Enum):
-    """Types of tasks that can be decomposed"""
+    """
+    Enumeration of the types of tasks that can be decomposed.
+    """
     DEVELOPMENT = "development"
     RESEARCH = "research"
     ANALYSIS = "analysis"
@@ -24,7 +26,9 @@ class TaskType(Enum):
 
 
 class TaskPriority(Enum):
-    """Priority levels for tasks"""
+    """
+    Enumeration of the priority levels for tasks.
+    """
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -33,14 +37,34 @@ class TaskPriority(Enum):
 
 @dataclass
 class TaskDependency:
-    """Represents a dependency between tasks"""
+    """
+    Represents a dependency between two tasks.
+
+    Attributes:
+        task_id: The ID of the task that this task depends on.
+        dependency_type: The type of dependency (e.g., "blocks", "requires", "suggests").
+    """
     task_id: str
     dependency_type: str  # "blocks", "requires", "suggests"
 
 
 @dataclass
 class Task:
-    """Represents a decomposed task"""
+    """
+    Represents a single, decomposed task.
+
+    Attributes:
+        task_id: A unique identifier for the task.
+        title: The title of the task.
+        description: A description of the task.
+        task_type: The type of the task.
+        priority: The priority of the task.
+        estimated_effort: The estimated effort required to complete the task.
+        required_capabilities: A list of capabilities required to perform the task.
+        dependencies: A list of dependencies for this task.
+        acceptance_criteria: A list of criteria that must be met for the task to be considered complete.
+        metadata: A dictionary for storing arbitrary metadata.
+    """
     task_id: str
     title: str
     description: str
@@ -53,7 +77,15 @@ class Task:
     metadata: Dict[str, Any]
 
     def is_ready(self, completed_tasks: set) -> bool:
-        """Check if task is ready to be executed"""
+        """
+        Checks if the task is ready to be executed based on its dependencies.
+
+        Args:
+            completed_tasks: A set of IDs of tasks that have already been completed.
+
+        Returns:
+            True if the task is ready to be executed, False otherwise.
+        """
         for dep in self.dependencies:
             if dep.dependency_type == "blocks" and dep.task_id not in completed_tasks:
                 return False
@@ -62,7 +94,16 @@ class Task:
 
 @dataclass
 class DecompositionResult:
-    """Result of task decomposition"""
+    """
+    Contains the results of a task decomposition.
+
+    Attributes:
+        original_task: The original task description.
+        subtasks: A list of the decomposed subtasks.
+        execution_order: A list of lists, representing batches of tasks that can be executed in parallel.
+        estimated_total_effort: The total estimated effort for all subtasks.
+        critical_path: A list of task IDs representing the critical path of the decomposition.
+    """
     original_task: str
     subtasks: List[Task]
     execution_order: List[List[str]]  # List of task batches
@@ -72,13 +113,15 @@ class DecompositionResult:
 
 class TaskDecomposer:
     """
-    Decomposes complex tasks into manageable subtasks
+    Decomposes complex tasks into smaller, manageable subtasks.
 
-    Uses various strategies to break down tasks based on type,
-    complexity, and available agent capabilities.
+    This class uses a strategy pattern to decompose tasks based on their type.
     """
 
     def __init__(self):
+        """
+        Initializes the TaskDecomposer.
+        """
         self.task_counter = 0
         self.decomposition_strategies = {
             TaskType.DEVELOPMENT: self._decompose_development_task,
@@ -96,20 +139,18 @@ class TaskDecomposer:
         context: Optional[Dict[str, Any]] = None
     ) -> DecompositionResult:
         """
-        Decompose a complex task into subtasks
+        Decomposes a complex task into a set of smaller subtasks.
 
         Args:
-            task_description: High-level description of the task
-            task_type: Type of task being decomposed
-            context: Additional context for decomposition
+            task_description: A high-level description of the task to be decomposed.
+            task_type: The type of the task.
+            context: An optional dictionary of additional context for the decomposition.
 
         Returns:
-            DecompositionResult with subtasks and execution plan
+            A DecompositionResult object containing the subtasks and execution plan.
         """
         logger.info(f"Decomposing {task_type.value} task: {task_description}")
 
-        # Reset task counter for each decomposition
-        self.task_counter = 0
         context = context or {}
 
         # Select appropriate decomposition strategy
@@ -150,7 +191,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose a development task"""
+        """
+        Decomposes a development task into a sequence of subtasks.
+
+        Args:
+            description: The description of the development task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         # Common development task breakdown
@@ -163,29 +213,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(phases):
-            # Generate task ID
-            task_id = self._generate_task_id(phase_id)
-            
-            # Create dependencies from previous task
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} phase of: {description}",
                 task_type=TaskType.DEVELOPMENT,
                 priority=TaskPriority.HIGH,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -198,7 +234,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose a research task"""
+        """
+        Decomposes a research task into a sequence of subtasks.
+
+        Args:
+            description: The description of the research task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         research_phases = [
@@ -210,27 +255,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(research_phases):
-            task_id = self._generate_task_id(phase_id)
-            
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} for research task: {description}",
                 task_type=TaskType.RESEARCH,
                 priority=TaskPriority.MEDIUM,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, research_phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -243,7 +276,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose an analysis task"""
+        """
+        Decomposes an analysis task into a sequence of subtasks.
+
+        Args:
+            description: The description of the analysis task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         analysis_phases = [
@@ -256,27 +298,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(analysis_phases):
-            task_id = self._generate_task_id(phase_id)
-            
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} for: {description}",
                 task_type=TaskType.ANALYSIS,
                 priority=TaskPriority.MEDIUM,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, analysis_phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -289,7 +319,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose a testing task"""
+        """
+        Decomposes a testing task into a sequence of subtasks.
+
+        Args:
+            description: The description of the testing task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         testing_phases = [
@@ -302,27 +341,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(testing_phases):
-            task_id = self._generate_task_id(phase_id)
-            
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} for: {description}",
                 task_type=TaskType.TESTING,
                 priority=TaskPriority.HIGH,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, testing_phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -335,7 +362,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose a documentation task"""
+        """
+        Decomposes a documentation task into a sequence of subtasks.
+
+        Args:
+            description: The description of the documentation task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         doc_phases = [
@@ -347,27 +383,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(doc_phases):
-            task_id = self._generate_task_id(phase_id)
-            
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} for: {description}",
                 task_type=TaskType.DOCUMENTATION,
                 priority=TaskPriority.MEDIUM,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, doc_phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -380,7 +404,16 @@ class TaskDecomposer:
         description: str,
         context: Dict[str, Any]
     ) -> List[Task]:
-        """Decompose an architecture task"""
+        """
+        Decomposes an architecture task into a sequence of subtasks.
+
+        Args:
+            description: The description of the architecture task.
+            context: The context for the decomposition.
+
+        Returns:
+            A list of decomposed tasks.
+        """
         subtasks = []
 
         arch_phases = [
@@ -392,27 +425,15 @@ class TaskDecomposer:
         ]
 
         for i, (phase_id, title, capabilities, effort) in enumerate(arch_phases):
-            task_id = self._generate_task_id(phase_id)
-            
-            dependencies = []
-            if i > 0 and subtasks:
-                prev_task = subtasks[-1]
-                dependencies = [
-                    TaskDependency(
-                        task_id=prev_task.task_id,
-                        dependency_type="blocks"
-                    )
-                ]
-            
             task = Task(
-                task_id=task_id,
+                task_id=self._generate_task_id(phase_id),
                 title=f"{title}: {description}",
                 description=f"{title} for: {description}",
                 task_type=TaskType.ARCHITECTURE,
                 priority=TaskPriority.CRITICAL,
                 estimated_effort=effort,
                 required_capabilities=capabilities,
-                dependencies=dependencies,
+                dependencies=self._create_sequential_dependencies(i, arch_phases),
                 acceptance_criteria=[f"Complete {title.lower()}"],
                 metadata={"phase": phase_id}
             )
@@ -425,7 +446,16 @@ class TaskDecomposer:
         description: str,
         task_type: TaskType
     ) -> DecompositionResult:
-        """Fallback decomposition when no specific strategy exists"""
+        """
+        A fallback decomposition strategy for when a specific strategy is not available.
+
+        Args:
+            description: The description of the task.
+            task_type: The type of the task.
+
+        Returns:
+            A DecompositionResult with a single, general-purpose task.
+        """
         task = Task(
             task_id=self._generate_task_id("default"),
             title=description,
@@ -448,7 +478,15 @@ class TaskDecomposer:
         )
 
     def _build_execution_order(self, subtasks: List[Task]) -> List[List[str]]:
-        """Build execution order respecting dependencies"""
+        """
+        Builds an execution order for a list of subtasks, respecting their dependencies.
+
+        Args:
+            subtasks: A list of tasks to be ordered.
+
+        Returns:
+            A list of lists, where each inner list represents a batch of tasks that can be executed in parallel.
+        """
         completed = set()
         execution_order = []
 
@@ -474,8 +512,18 @@ class TaskDecomposer:
         subtasks: List[Task],
         execution_order: List[List[str]]
     ) -> List[str]:
-        """Calculate the critical path through tasks"""
-        # Simplified critical path - just take longest sequential path
+        """
+        Calculates the critical path for a set of tasks.
+
+        Note: This is a simplified implementation that takes the longest task from each batch.
+
+        Args:
+            subtasks: A list of all subtasks.
+            execution_order: The execution order of the tasks.
+
+        Returns:
+            A list of task IDs representing the critical path.
+        """
         path = []
         for batch in execution_order:
             # Find task with highest effort in each batch
@@ -486,7 +534,41 @@ class TaskDecomposer:
 
         return path
 
+    def _create_sequential_dependencies(
+        self,
+        current_index: int,
+        phases: List[tuple]
+    ) -> List[TaskDependency]:
+        """
+        Creates a sequential dependency on the previous phase.
+
+        Args:
+            current_index: The index of the current phase.
+            phases: A list of all phases.
+
+        Returns:
+            A list containing a single dependency on the previous phase, or an empty list if this is the first phase.
+        """
+        if current_index == 0:
+            return []
+
+        prev_phase_id = phases[current_index - 1][0]
+        return [
+            TaskDependency(
+                task_id=self._generate_task_id(prev_phase_id),
+                dependency_type="blocks"
+            )
+        ]
+
     def _generate_task_id(self, prefix: str) -> str:
-        """Generate unique task ID"""
+        """
+        Generates a unique task ID.
+
+        Args:
+            prefix: The prefix for the task ID.
+
+        Returns:
+            A unique task ID string.
+        """
         self.task_counter += 1
         return f"{prefix}_{self.task_counter:04d}"
