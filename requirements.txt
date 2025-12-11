@@ -1,0 +1,30 @@
+# Python dependencies for AI Council System and AI command-line interfaces
+# Install with: pip install -r requirements.txt
+
+# AI/LLM API clients
+openai>=1.0.0
+anthropic>=0.3.0
+
+# Core dependencies
+asyncio-compat>=0.1.0  # Async utilities
+python-dateutil>=2.8.0  # Date/time handling
+
+# Testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+
+# Development tools
+black>=23.0.0  # Code formatting
+flake8>=6.0.0  # Linting
+mypy>=1.0.0  # Type checking
+
+# Optional: For future streaming integration
+# websockets>=11.0.0
+# aiohttp>=3.8.0
+
+# Optional: For future blockchain integration
+# web3>=6.0.0
+# eth-account>=0.8.0
+
+# GitHub Copilot CLI is installed separately via npm (see install_ai_clis.sh)

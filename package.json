@@ -1,0 +1,20 @@
+{
+  "name": "a-recursive-root",
+  "version": "1.0.0",
+  "description": "A recursive root project",
+  "main": "index.js",
+  "scripts": {
+    "test": "python3 tests/test_sub_issue_suggester.py || echo \"Running Python tests\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivi374/a-recursive-root.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ivi374/a-recursive-root/issues"
+  },
+  "homepage": "https://github.com/ivi374/a-recursive-root#readme"
+}

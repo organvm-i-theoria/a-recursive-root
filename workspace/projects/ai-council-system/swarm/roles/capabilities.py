@@ -11,7 +11,9 @@ from dataclasses import dataclass
 
 
 class CapabilityLevel(Enum):
-    """Proficiency levels for capabilities"""
+    """
+    Enumeration of the proficiency levels for a capability.
+    """
     NOVICE = 1
     INTERMEDIATE = 2
     ADVANCED = 3
@@ -20,7 +22,15 @@ class CapabilityLevel(Enum):
 
 @dataclass
 class Capability:
-    """Represents a capability with proficiency level"""
+    """
+    Represents a capability that an agent can possess.
+
+    Attributes:
+        name: The name of the capability.
+        level: The proficiency level of the agent in this capability.
+        related_skills: A list of skills related to this capability.
+        description: A description of the capability.
+    """
     name: str
     level: CapabilityLevel
     related_skills: List[str]
@@ -165,21 +175,40 @@ CAPABILITY_DEFINITIONS: Dict[str, Dict[str, str]] = {
 
 class CapabilityMatcher:
     """
-    Matches agent capabilities to role requirements
+    Matches agent capabilities to role requirements.
 
-    Provides utilities for determining if agents can fulfill
-    role requirements based on their capabilities.
+    This class provides a set of utilities for evaluating how well an agent's
+    capabilities align with the requirements of a role.
     """
 
     def __init__(self):
+        """
+        Initializes the CapabilityMatcher.
+        """
         self.capabilities = CAPABILITY_DEFINITIONS
 
     def get_capability_info(self, capability: str) -> Dict[str, str]:
-        """Get information about a capability"""
+        """
+        Gets information about a specific capability.
+
+        Args:
+            capability: The name of the capability.
+
+        Returns:
+            A dictionary containing information about the capability, or an empty dictionary if the capability is not found.
+        """
         return self.capabilities.get(capability, {})
 
     def get_related_capabilities(self, capability: str) -> Set[str]:
-        """Get capabilities related to a given capability"""
+        """
+        Gets a set of capabilities related to a given capability.
+
+        Args:
+            capability: The name of the capability.
+
+        Returns:
+            A set of related capability names.
+        """
         info = self.get_capability_info(capability)
         related = set(info.get("related_skills", []))
 
@@ -196,9 +225,16 @@ class CapabilityMatcher:
         required_capabilities: List[str]
     ) -> float:
         """
-        Calculate how well agent capabilities match requirements
+        Calculates a match score indicating how well an agent's capabilities match a set of required capabilities.
 
-        Returns a score from 0.0 to 1.0
+        The score is a float between 0.0 and 1.0, where 1.0 represents a perfect match.
+
+        Args:
+            agent_capabilities: A list of the agent's capabilities.
+            required_capabilities: A list of the required capabilities.
+
+        Returns:
+            A match score between 0.0 and 1.0.
         """
         if not required_capabilities:
             return 1.0
@@ -225,7 +261,16 @@ class CapabilityMatcher:
         agent_capabilities: List[str],
         required_capabilities: List[str]
     ) -> List[str]:
-        """Get list of capabilities the agent is missing"""
+        """
+        Gets a list of capabilities that are required but not possessed by the agent.
+
+        Args:
+            agent_capabilities: A list of the agent's capabilities.
+            required_capabilities: A list of the required capabilities.
+
+        Returns:
+            A list of missing capability names.
+        """
         agent_set = set(agent_capabilities)
         required_set = set(required_capabilities)
         return list(required_set - agent_set)
@@ -236,9 +281,14 @@ class CapabilityMatcher:
         required_capabilities: List[str]
     ) -> Dict[str, List[str]]:
         """
-        Analyze capability gap between agent and requirements
+        Analyzes the capability gap between an agent and a set of requirements.
 
-        Returns dict with 'missing', 'has', and 'related' capabilities
+        Args:
+            agent_capabilities: A list of the agent's capabilities.
+            required_capabilities: A list of the required capabilities.
+
+        Returns:
+            A dictionary with three keys: "missing", "has", and "related", each containing a list of capability names.
         """
         agent_set = set(agent_capabilities)
         required_set = set(required_capabilities)
@@ -265,7 +315,16 @@ class CapabilityMatcher:
         agent_capabilities: List[str],
         target_role_capabilities: List[str]
     ) -> List[str]:
-        """Suggest capabilities agent should learn for target role"""
+        """
+        Suggests a list of capabilities that an agent should learn to be better suited for a target role.
+
+        Args:
+            agent_capabilities: A list of the agent's current capabilities.
+            target_role_capabilities: A list of the capabilities required for the target role.
+
+        Returns:
+            A prioritized list of suggested capabilities to learn.
+        """
         gap = self.get_capability_gap(agent_capabilities, target_role_capabilities)
         missing = gap["missing"]
 
@@ -286,7 +345,16 @@ class CapabilityMatcher:
         agent_capability: str,
         required_capability: str
     ) -> bool:
-        """Check if agent capability can substitute for required capability"""
+        """
+        Checks if an agent's capability can be used as a substitute for a required capability.
+
+        Args:
+            agent_capability: The capability that the agent possesses.
+            required_capability: The capability that is required.
+
+        Returns:
+            True if the agent's capability can substitute for the required one, False otherwise.
+        """
         if agent_capability == required_capability:
             return True
 
@@ -300,9 +368,14 @@ class CapabilityMatcher:
         required_capabilities: List[str]
     ) -> List[tuple]:
         """
-        Rank agents by fitness for role
+        Ranks a list of agents based on their fitness for a role with a given set of required capabilities.
 
-        Returns list of (agent, score) tuples sorted by score
+        Args:
+            agents: A list of agent dictionaries, where each dictionary has a "capabilities" key.
+            required_capabilities: A list of the capabilities required for the role.
+
+        Returns:
+            A list of (agent, score) tuples, sorted in descending order of score.
         """
         rankings = []
 
@@ -322,7 +395,12 @@ _capability_matcher: CapabilityMatcher = None
 
 
 def get_capability_matcher() -> CapabilityMatcher:
-    """Get global capability matcher instance"""
+    """
+    Gets the global instance of the CapabilityMatcher.
+
+    Returns:
+        The global CapabilityMatcher instance.
+    """
     global _capability_matcher
     if _capability_matcher is None:
         _capability_matcher = CapabilityMatcher()

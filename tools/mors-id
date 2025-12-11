@@ -10,6 +10,16 @@ import sys
 import uuid
 
 def generate_mors_id(namespace: str, entity: str) -> str:
+    """
+    Generates a MORS-compliant identifier.
+
+    Args:
+        namespace: The namespace for the identifier.
+        entity: The name of the entity.
+
+    Returns:
+        A MORS-compliant identifier string.
+    """
     unique = uuid.uuid4().hex[:8]
     return f"{namespace}:{entity}:{unique}"
 

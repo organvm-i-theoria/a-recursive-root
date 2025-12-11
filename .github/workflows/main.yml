@@ -16,9 +16,14 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
       - name: Run tests
-        run: npm test || true
+        run: npm test
       - name: Generate SBOM
         run: echo "SBOM generation placeholder"
       - name: Provenance
