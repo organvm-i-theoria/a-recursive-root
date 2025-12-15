@@ -1,195 +1,116 @@
-# AI Council System - Development Repository
+# a-recursive-root: Z Cartridge Development Framework
 
-## 🎯 Project Vision
+## 🎯 Repository Purpose
 
-A decentralized 24/7 live streaming platform where AI agents form organizational bodies to debate real-time events, with user participation through cryptocurrency mechanisms.
+**a-recursive-root** is a Z Cartridge framework repository providing reproducible development environments, governance standards, and organizational infrastructure for software projects. It serves as a foundation for creating well-structured, maintainable codebases with built-in best practices.
 
-## 📋 Current Phase: Phase 1 - Foundation Architecture
+## 📋 What is a Z Cartridge?
 
-### Project Status
+A Z Cartridge is a standardized project structure that provides:
+- **Reproducible Environments**: Consistent development setups across teams
+- **Governance Frameworks**: Security policies, code ownership, compliance
+- **Documentation Architecture**: Structured knowledge management
+- **Container Definitions**: Portable deployment configurations
+- **Workspace Management**: Organized project hierarchies
 
-- **Phase**: Foundation & Planning
-- **Developer**: Solo (Swarm-Assisted)
-- **Start Date**: October 14, 2025
-- **Repository**: Development Prototype
-
-## 🏗️ Architecture Overview
+## 🏗️ Z Cartridge Structure
 
 ```
-ai-council-system/
-├── core/                    # Core system components
-│   ├── agents/             # AI agent implementations
-│   ├── council/            # Council formation & management
-│   ├── events/             # Real-time event ingestion
-│   └── rng/                # Random number generation
-├── blockchain/             # Blockchain integration
-│   ├── contracts/          # Smart contracts
-│   ├── rng/                # On-chain RNG (Chainlink VRF, Pyth)
-│   └── token/              # Token mechanics
-├── streaming/              # Live streaming components
-│   ├── visuals/            # Generative visuals
-│   ├── audio/              # Audio synthesis
-│   └── broadcast/          # Stream management
-├── web/                    # Website & frontend
-│   ├── frontend/           # React/Next.js app
-│   ├── backend/            # API server
-│   └── api/                # External API integrations
-├── swarm/                  # Swarm orchestration system
-│   ├── assemblies/         # Assembly definitions
-│   ├── orchestrator/       # Swarm coordinator
-│   └── roles/              # Role specifications
-├── governance/             # Governance frameworks
-├── tests/                  # Testing suite
-└── docs/                   # Documentation
+a-recursive-root/
+├── ai/                      # AI agent configurations and roles
+├── archive/                 # Historical archives and documentation
+│   ├── curated/            # Curated papers and prototypes
+│   ├── snapshots/          # Point-in-time backups
+│   └── yearly/             # Annual archives
+├── bin/                     # Executable scripts
+├── cloud/                   # Cloud infrastructure configurations
+├── containers/              # Container definitions (Docker, etc.)
+│   ├── base/               # Base container images
+│   ├── languages/          # Language-specific containers
+│   └── services/           # Service containers
+├── data/                    # Data catalog and policies
+├── docs/                    # Documentation
+│   ├── architecture/       # System architecture docs
+│   └── academic/           # Academic resources
+├── environment/             # Environment configurations
+├── governance/              # Governance frameworks and policies
+├── integrations/            # Third-party integrations
+├── observability/           # Monitoring and observability
+├── provenance/              # SBOM, attestations, checksums
+├── scripts/                 # Build and deployment scripts
+├── templates/               # Project templates
+├── tools/                   # Development tools
+└── workspace/               # Active development workspace
+    └── projects/           # Individual projects
 ```
 
-## 🚀 Development Phases
+## 🔧 Manifest-Driven Configuration
 
-### Phase 1: Foundation (Current)
+The Z Cartridge uses `manifest.yml` to define:
+- **Slots**: Key directory locations ($Z_ROOT, $Z_SCRIPTS, $Z_ARCHIVE, etc.)
+- **Workflows**: Bootstrap, hydrate, build, and release processes
+- **Guardrails**: Required files, license allowlists, test coverage requirements
+- **Provenance**: SBOM, attestations, and checksums for security
+- **Ontology**: Schema and glossary for knowledge management
 
-- [x] Project setup
-- [x] README update
-- [ ] Core architecture definition
-- [ ] Swarm orchestrator implementation
-- [ ] Basic AI agent framework
-- [ ] Event ingestion prototype
+## 🎯 Use Cases
 
-### Phase 2: Prototyping
+### 1. Project Foundation
+Start new projects with production-ready structure, governance, and tooling built-in.
 
-- [ ] Website launch
-- [ ] Twitter presence
-- [ ] Token creation (pump.fun)
-- [ ] Basic live stream setup
+### 2. Organizational Standards
+Enforce consistent practices across multiple projects and teams.
 
-### Phase 3: Core Implementation
+### 3. Historical Archive
+Maintain comprehensive project history, documentation, and decision records.
 
-- [ ] AI council debates
-- [ ] Blockchain RNG integration
-- [ ] User interaction mechanics
-- [ ] Cryptocurrency rewards
-
-### Phase 4: Advanced Features
-
-- [ ] Generative visuals
-- [ ] Advanced betting mechanics
-- [ ] Governance implementation
-- [ ] Multi-chain support
-
-### Phase 5: Launch & Scale
-
-- [ ] Public beta
-- [ ] Community building
-- [ ] 24/7 operations
-- [ ] Platform expansion
-
-## ⚠️ Legal & Ethical Considerations
-
-### Immediate Concerns
-
-1. **Gambling Regulations**: Betting mechanics require compliance with UIGEA, state laws
-2. **Securities Law**: Token may be classified as security (Howey Test)
-3. **Content Liability**: NSFW content creates platform risks
-4. **International Compliance**: EU AI Act, GDPR, etc.
-
-### Mitigation Strategy
-
-- Start with entertainment-focused MVP (no gambling)
-- Implement robust content moderation
-- Consult legal counsel before token launch
-- Build compliance frameworks from day one
-
-## 🛠️ Technology Stack
-
-### Core Technologies
-
-- **AI/LLM**: Claude, GPT-4, Grok (via APIs)
-- **Blockchain**: Ethereum + Solana hybrid
-- **RNG**: Chainlink VRF, Pyth Entropy, Quantum (future)
-- **Streaming**: OBS, RTMP, Twitch/YouTube APIs
-- **Frontend**: Next.js, React, TailwindCSS
-- **Backend**: Node.js, Python (FastAPI)
-- **Database**: PostgreSQL, Redis (caching)
-
-### Development Tools
-
-- **Version Control**: Git/GitHub
-- **CI/CD**: GitHub Actions
-- **Testing**: Jest, Pytest, Hardhat
-- **Monitoring**: Prometheus, Grafana
-
-## 📊 Key Metrics & Data Points
-
-### Market Context (October 2025)
-
-- Bitcoin: $102,000 (from $123,000 peak)
-- Liquidations: $19 billion
-- Memecoin failure rate: 97-99%
-- Pump.fun successes: 293 tokens >$1M profit
-
-### Target Metrics
-
-- Stream uptime: 99.9% (24/7)
-- Concurrent viewers: 1,000+ (Phase 5)
-- Token holders: 10,000+ (Phase 5)
-- Daily transactions: 5,000+ (Phase 5)
+### 4. Research & Development
+Curate papers, prototypes, and experimental code in organized archives.
 
 ## 🤝 Contributing
 
-Solo developer project with swarm-assisted development. Contact via GitHub issues.
+This repository follows Z Cartridge governance standards. See `governance/` for contribution guidelines and policies.
 
 ## 📄 License
 
-TBD - Pending legal review
-
-## 🔗 Links
-
-- Website: TBD
-- Twitter: TBD
-- Discord: TBD
-- Token: TBD
+See individual project licenses in `licenses/` directory.
 
 ---
 
-## 📜 Repository History & Evolution
+## 📜 Historical Archive: AI Council Development
 
-**Historical Note**: This repository (`a-recursive-root`) serves as the **main branch origin** and **development foundation** for the AI Council System project, which evolved into the **ai-council--coliseum** production platform.
+**Note**: This repository previously served as the development foundation for the AI Council System project. That project has now been **successfully migrated** to its own repository: **[ai-council--coliseum](https://github.com/ivviiviivvi/ai-council--coliseum)**.
 
-### Key Historical Branch
+### Historical Branch
 
-**`claude/phase4-advanced-features-011CUSN6Nu1tuVpbLu9gZBhc`** ⭐
+The complete AI Council codebase (28,500+ lines across Phases 1-4) is preserved in branch:  
+**`claude/phase4-advanced-features-011CUSN6Nu1tuVpbLu9gZBhc`**
 
-This branch represents the most complete state of development, containing:
+This branch contains:
 - ✅ Complete Phases 1-3 (foundation, production features, blockchain)
-- 🚧 Phase 4 in progress (advanced features with Phase 4.3 complete)
-- 28,500+ lines of production code
-- Comprehensive documentation
+- ✅ Phase 4.3 (real-time viewer voting with gamification)
+- Production-ready code and comprehensive documentation
 
-**For complete historical context**, see:
-- **REPOSITORY_HISTORY.md**: Comprehensive evolution documentation
-- **archive/curated/MAIN_BRANCH_ORIGIN.md**: Main branch genesis and evolution
-- **BRANCH_STATUS.md**: Branch relationships and status
+### Repository Split
 
-**Repository Evolution**:
-```
-a-recursive-root (Development Foundation)
-    └─→ ai-council--coliseum (Production Platform)
-```
+As of December 2025, the projects are separated:
 
-This repository maintains the definitive historical archive of all development phases.
+| Repository | Purpose | Status |
+|------------|---------|--------|
+| **a-recursive-root** | Z Cartridge framework & historical archive | Active (this repo) |
+| **ai-council--coliseum** | AI Council production platform | Active development |
+
+### For Complete AI Council History
+
+See archived documentation:
+- **REPOSITORY_HISTORY.md**: Complete project evolution
+- **archive/curated/MAIN_BRANCH_ORIGIN.md**: Main branch genesis
+- **PHASE_3_COMPLETE.md** & **PHASE_4_SESSION_SUMMARY.md**: Phase completion records
+
+**Active development of AI Council continues at**: https://github.com/ivviiviivvi/ai-council--coliseum
 
 ---
 
-**Last Updated**: December 11, 2025
+**Repository Role**: Z Cartridge Framework & Historical Archive  
+**Last Updated**: December 15, 2025  
 **Version**: 0.1.0-alpha
-**Status**: Historical Archive & Development Foundation
-
-## 📚 Z Cartridge Foundation
-
-This repository is built on the Z Cartridge framework, providing:
-- Reproducible development environments
-- Governance policies and standards
-- Documentation architecture
-- Container definitions
-- Workspace management
-
-See `/docs` for detailed cartridge documentation.
