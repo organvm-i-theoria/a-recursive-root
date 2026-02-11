@@ -481,7 +481,7 @@ This distinction matters. The prototype demonstrates that structured multi-agent
 - Retrieval-augmented agents that can cite sources during debate
 - Debate quality metrics: convergence rate, argument diversity index, consensus stability over rounds
 - Cross-council deliberation — councils of councils, recursive structure
-- Integration with `recursive-engine` for shared recursive-systems primitives
+- Integration with `recursive-engine--generative-entity` for shared recursive-systems primitives
 
 **Long-term (if the prototype validates):**
 - Persistent debate memory across sessions (agent learning)
@@ -499,7 +499,7 @@ This repository is part of **ORGAN-I (Theoria)** — the theoretical research or
 
 | Repository | Relationship |
 |-----------|-------------|
-| [`recursive-engine`](https://github.com/organvm-i-theoria/recursive-engine) | Core recursive system engine; provides the foundational architecture that informs this project's recursive deliberation model |
+| [`recursive-engine--generative-entity`](https://github.com/organvm-i-theoria/recursive-engine--generative-entity) | Core recursive system engine; provides the foundational architecture that informs this project's recursive deliberation model |
 | `recursive-ontology` | Formal ontology for recursive systems; supplies the conceptual vocabulary for understanding agent-system relationships |
 | [`a-i-council--coliseum`](https://github.com/organvm-i-theoria/a-i-council--coliseum) | Related council architecture explorations and earlier prototypes |
 
