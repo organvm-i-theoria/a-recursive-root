@@ -492,7 +492,7 @@ This repository is part of **ORGAN-I (Theoria)** — the theoretical research or
 | Repository | Relationship |
 |-----------|-------------|
 | [`recursive-engine`](https://github.com/organvm-i-theoria/recursive-engine) | Core recursive system engine; provides the foundational architecture that informs this project's recursive deliberation model |
-| [`recursive-ontology`](https://github.com/organvm-i-theoria/recursive-ontology) | Formal ontology for recursive systems; supplies the conceptual vocabulary for understanding agent-system relationships |
+| `recursive-ontology` | Formal ontology for recursive systems; supplies the conceptual vocabulary for understanding agent-system relationships |
 | [`a-i-council--coliseum`](https://github.com/organvm-i-theoria/a-i-council--coliseum) | Related council architecture explorations and earlier prototypes |
 
 **The eight-organ system:**
