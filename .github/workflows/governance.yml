@@ -8,7 +8,7 @@ jobs:
   check-governance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Validate ADR
         run: |
           if ! grep -Rq "^# Architecture Decision Record" workspace; then
