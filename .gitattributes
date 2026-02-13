@@ -8,7 +8,7 @@
 *.json text
 *.csv text
 *.bat eol=crlf
-
 # Treat generated archives as binary
 *.zip binary
 *.tar.gz binary
+*.zip !text !filter !merge !diff
